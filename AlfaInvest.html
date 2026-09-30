@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfa Invest — концепция продукта</title>
+<style>
+:root{
+  --red:#EF3124;
+  --red-dark:#C4251A;
+  --red-soft:#FFF1F0;
+  --ink:#0F0F0F;
+  --ink-2:#1C1C1E;
+  --muted:#6E6E73;
+  --line:#E6E6EB;
+  --bg:#FFFFFF;
+  --bg-soft:#F6F6F8;
+  --green:#12A150;
+  --green-soft:#E9F7EF;
+  --amber:#C77700;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Inter","Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.45;
+}
+img,svg{display:block;max-width:100%}
+
+/* ---------- progress ---------- */
+.progress{
+  position:fixed;top:0;left:0;right:0;height:3px;background:transparent;z-index:100;
+}
+.progress-bar{height:100%;width:0;background:var(--red);transition:width .15s ease}
+
+/* ---------- slide shell ---------- */
+.slide{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  padding:88px 56px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.slide:nth-child(even){background:var(--bg-soft)}
+.slide-inner{max-width:1200px;margin:0 auto;width:100%}
+.slide-inner.wide{max-width:1440px}
+
+.slide-head{
+  display:flex;align-items:center;gap:16px;margin-bottom:28px;
+}
+.slide-num{
+  font-size:13px;font-weight:700;letter-spacing:.08em;
+  color:var(--red);
+  padding:5px 10px;border:1.5px solid var(--red);border-radius:6px;
+  line-height:1;
+}
+.slide-kicker{
+  font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);
+}
+h1{font-size:64px;line-height:1.05;letter-spacing:-.02em;font-weight:800}
+h2{font-size:40px;line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h3{font-size:22px;font-weight:700;letter-spacing:-.01em}
+h4{font-size:16px;font-weight:700}
+p{font-size:17px;color:var(--ink-2)}
+.lead{font-size:20px;color:var(--muted);max-width:820px;margin-bottom:40px;line-height:1.5}
+.muted{color:var(--muted)}
+.small{font-size:13px;color:var(--muted)}
+
+/* ---------- cover ---------- */
+.cover{
+  background:linear-gradient(135deg,#111 0%,#1C1C1E 55%,#2A0B08 100%);
+  color:#fff;border-bottom:none;
+}
+.cover .slide-inner{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:center}
+.cover h1{color:#fff;margin-bottom:24px}
+.cover .lead{color:#B8B8BE;font-size:21px;margin-bottom:36px}
+.cover-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(239,49,36,.15);border:1px solid rgba(239,49,36,.45);
+  color:#FF7A6E;font-size:13px;font-weight:600;letter-spacing:.06em;
+  padding:8px 14px;border-radius:100px;margin-bottom:28px;text-transform:uppercase;
+}
+.cover-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red)}
+.cover-meta{
+  display:flex;gap:36px;padding-top:32px;border-top:1px solid rgba(255,255,255,.12);
+  font-size:14px;
+}
+.cover-meta div span{display:block;color:#7A7A80;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.cover-meta div b{color:#fff;font-weight:600;font-size:15px}
+
+.cover-card{
+  background:#fff;border-radius:20px;padding:28px;color:var(--ink);
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+.cover-card .cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.cover-card .cc-label{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.cover-card .cc-value{font-size:38px;font-weight:800;letter-spacing:-.02em}
+.cover-card .cc-delta{color:var(--green);font-weight:700;font-size:15px}
+
+/* ---------- generic cards ---------- */
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;
+}
+.card.accent{border-color:rgba(239,49,36,.35);background:var(--red-soft)}
+.card h4{margin-bottom:8px}
+.card p{font-size:15px;color:var(--muted);line-height:1.5}
+.card .kpi{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--red);margin-bottom:6px}
+
+.pill{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.05em;
+  padding:5px 10px;border-radius:100px;text-transform:uppercase;
+}
+.pill.must{background:#FDECEA;color:#C4251A}
+.pill.should{background:#FFF4E0;color:var(--amber)}
+.pill.could{background:#EAF2FF;color:#1B5FCC}
+.pill.wont{background:#EFEFF2;color:#6E6E73}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;background:#FAFAFC}
+tr:last-child td{border-bottom:none}
+td b{font-weight:700}
+.hl{background:var(--red-soft)}
+
+/* ---------- persona ---------- */
+.persona{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start}
+.persona-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center;
+}
+.avatar{
+  width:88px;height:88px;border-radius:50%;margin:0 auto 16px;
+  background:linear-gradient(135deg,var(--red),#FF7A6E);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:32px;font-weight:800;
+}
+.persona-card .name{font-size:20px;font-weight:800;margin-bottom:4px}
+.persona-card .role{font-size:13px;color:var(--muted);margin-bottom:18px}
+.persona-card .facts{text-align:left;font-size:13.5px;border-top:1px solid var(--line);padding-top:16px}
+.persona-card .facts div{display:flex;justify-content:space-between;padding:5px 0}
+.persona-card .facts span{color:var(--muted)}
+.persona-card .facts b{font-weight:700}
+
+/* ---------- CJM ---------- */
+.cjm{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.cjm > div{padding:20px 16px;border-right:1px solid var(--line);font-size:13.5px}
+.cjm > div:last-child{border-right:none}
+.cjm .cjm-head{background:#FAFAFC;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:12px 16px}
+.cjm .step{font-weight:700;font-size:14px;color:var(--red);margin-bottom:8px}
+.cjm .pain{color:var(--muted);margin-top:8px;font-size:12.5px;line-height:1.45}
+.cjm-row{display:contents}
+
+/* ---------- browser mockup ---------- */
+.mockup-wrap{margin-top:8px}
+.browser{
+  border-radius:14px;overflow:hidden;background:#fff;
+  border:1px solid #DCDCE2;
+  box-shadow:0 24px 60px rgba(15,15,15,.13),0 2px 6px rgba(15,15,15,.05);
+}
+.browser-bar{
+  height:44px;background:#F2F2F5;border-bottom:1px solid #E2E2E8;
+  display:flex;align-items:center;gap:14px;padding:0 16px;
+}
+.dots{display:flex;gap:7px}
+.dots i{width:11px;height:11px;border-radius:50%;display:block}
+.dots i:nth-child(1){background:#FF5F57}
+.dots i:nth-child(2){background:#FEBC2E}
+.dots i:nth-child(3){background:#28C840}
+.url{
+  flex:1;max-width:420px;margin:0 auto;height:26px;background:#fff;border:1px solid #E2E2E8;
+  border-radius:7px;font-size:12px;color:var(--muted);display:flex;align-items:center;
+  padding:0 12px;gap:8px;
+}
+.url::before{content:"🔒";font-size:10px;opacity:.5}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:560px;background:#FAFAFC}
+
+/* sidebar */
+.side{
+  background:#111;color:#fff;padding:22px 16px;display:flex;flex-direction:column;
+}
+.side .logo{
+  display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;
+  letter-spacing:-.01em;margin-bottom:28px;padding:0 8px;
+}
+.side .logo i{
+  width:26px;height:26px;border-radius:7px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;font-style:normal;
+  font-size:13px;font-weight:800;
+}
+.side .nav{display:flex;flex-direction:column;gap:2px}
+.side .nav a{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;
+  font-size:14px;color:#A8A8B0;text-decoration:none;font-weight:500;
+}
+.side .nav a.active{background:rgba(239,49,36,.16);color:#fff;font-weight:600}
+.side .nav a.active::before{content:"";position:absolute;left:0;width:3px;height:20px;background:var(--red);border-radius:0 3px 3px 0}
+.side .nav{position:relative}
+.side .nav a .ic{width:16px;height:16px;opacity:.85}
+.side .user{
+  margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;gap:10px;font-size:13px;
+}
+.side .user .av{
+  width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--red),#FF7A6E);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;
+}
+.side .user .nm b{display:block;font-size:13px;font-weight:600;color:#fff}
+.side .user .nm span{font-size:11px;color:#7A7A80}
+
+/* main */
+.main{padding:28px 32px;background:#FAFAFC}
+.main-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.main-head h3{font-size:22px;margin-bottom:2px}
+.main-head .sub{font-size:13px;color:var(--muted)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;
+  border:none;cursor:default;white-space:nowrap;
+}
+.btn-red{background:var(--red);color:#fff}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn-dark{background:#111;color:#fff}
+.btn-sm{padding:8px 14px;font-size:13px}
+
+/* hero balance */
+.balance{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;
+  display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-bottom:18px;
+}
+.balance .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:10px}
+.balance .sum{font-size:42px;font-weight:800;letter-spacing:-.025em;line-height:1}
+.balance .sum small{font-size:20px;font-weight:600;color:var(--muted);margin-left:6px}
+.balance .delta{display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:14px;font-weight:700;color:var(--green)}
+.balance .delta .abs{color:var(--muted);font-weight:500}
+.balance-actions{display:flex;gap:10px;margin-top:22px}
+
+.balance-stats{display:flex;flex-direction:column;gap:12px;justify-content:center}
+.bstat{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:10px 14px;background:#FAFAFC;border-radius:10px}
+.bstat span{color:var(--muted)}
+.bstat b{font-weight:700}
+
+/* chart */
+.chart-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+.chart-card .ch-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.seg{display:flex;gap:4px;background:#F2F2F5;padding:3px;border-radius:9px}
+.seg span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;color:var(--muted)}
+.seg span.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* asset rows */
+.assets{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.assets .ah{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.assets .ah h4{font-size:15px}
+.arow{display:grid;grid-template-columns:44px 1fr 110px 90px 100px;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid #F0F0F3}
+.arow:last-child{border-bottom:none}
+.tick{
+  width:38px;height:38px;border-radius:10px;background:#F2F2F5;display:flex;
+  align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--ink-2);
+}
+.tick.red{background:var(--red-soft);color:var(--red-dark)}
+.arow .nm b{display:block;font-size:14px;font-weight:600}
+.arow .nm span{font-size:12px;color:var(--muted)}
+.arow .price{font-size:14px;font-weight:600;text-align:right}
+.arow .chg{font-size:13px;font-weight:700;text-align:right}
+.up{color:var(--green)} .down{color:var(--red)}
+.spark{width:100%;height:32px}
+
+/* catalog */
+.catalog{display:grid;grid-template-columns:230px 1fr 300px;gap:18px}
+.filters{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;align-self:start}
+.filters h4{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.fgroup{margin-bottom:20px}
+.fgroup .fl{font-size:13px;font-weight:600;margin-bottom:10px}
+.chk{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink-2);padding:5px 0}
+.chk i{width:16px;height:16px;border:1.5px solid #C9C9D0;border-radius:5px;display:block;flex:none}
+.chk.on i{background:var(--red);border-color:var(--red);position:relative}
+.chk.on i::after{content:"✓";position:absolute;color:#fff;font-size:11px;font-weight:800;left:3px;top:-1px}
+
+.search{
+  background:#fff;border:1px solid var(--line);border-radius:10px;height:42px;
+  display:flex;align-items:center;padding:0 14px;gap:10px;font-size:14px;color:var(--muted);
+  margin-bottom:16px;
+}
+.list{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.lrow{display:grid;grid-template-columns:1fr 100px 90px;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid #F0F0F3}
+.lrow:last-child{border-bottom:none}
+.lrow .nm b{display:block;font-size:14px;font-weight:600}
+.lrow .nm span{font-size:12px;color:var(--muted)}
+.lrow .price{text-align:right;font-weight:600;font-size:14px}
+
+.side-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;align-self:start}
+.side-card .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--red-soft);color:var(--red-dark);padding:4px 9px;border-radius:6px;margin-bottom:14px}
+.side-card h3{font-size:19px;margin-bottom:4px}
+.side-card .sub{font-size:12.5px;color:var(--muted);margin-bottom:18px}
+.stat-row{display:flex;justify-content:space-between;font-size:13.5px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.stat-row:last-of-type{border-bottom:none}
+.stat-row span{color:var(--muted)}
+.stat-row b{font-weight:700}
+
+/* modal */
+.modal-stage{position:relative;min-height:560px;background:#FAFAFC;overflow:hidden}
+.modal-stage .blurred{filter:blur(3px);opacity:.55;pointer-events:none}
+.overlay{
+  position:absolute;inset:0;background:rgba(15,15,15,.42);
+  display:flex;align-items:center;justify-content:center;padding:32px;
+}
+.modal{
+  background:#fff;border-radius:18px;width:480px;max-width:100%;
+  box-shadow:0 30px 70px rgba(0,0,0,.35);overflow:hidden;
+}
+.modal-head{padding:22px 26px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.modal-head h4{font-size:17px}
+.modal-head .x{color:var(--muted);font-size:18px}
+.modal-body{padding:24px 26px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.input{
+  height:46px;border:1.5px solid var(--line);border-radius:10px;display:flex;align-items:center;
+  padding:0 14px;font-size:15px;font-weight:600;justify-content:space-between;
+}
+.input .qty{display:flex;align-items:center;gap:14px}
+.input .qty span{color:var(--muted);font-weight:400}
+.summary{background:#FAFAFC;border-radius:12px;padding:16px 18px;margin-bottom:20px}
+.summary .r{display:flex;justify-content:space-between;font-size:14px;padding:6px 0}
+.summary .r span{color:var(--muted)}
+.summary .r.total{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;font-size:16px;font-weight:800}
+.summary .r.total span{color:var(--ink);font-weight:800}
+.modal-foot{padding:0 26px 26px}
+.modal-foot .btn{width:100%;height:50px;font-size:15px}
+.note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+
+/* analytics */
+.analytics-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:18px}
+.donut-wrap{display:flex;align-items:center;gap:24px}
+.donut{width:150px;height:150px;flex:none;transform:rotate(-90deg)}
+.legend{display:flex;flex-direction:column;gap:11px;font-size:13.5px;flex:1}
+.legend div{display:flex;align-items:center;gap:10px}
+.legend i{width:11px;height:11px;border-radius:3px;display:block;flex:none}
+.legend b{margin-left:auto;font-weight:700}
+.legend .val{color:var(--muted);font-size:12.5px;margin-left:8px}
+
+/* metrics */
+.metric-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+.metric-card .mt{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin-bottom:14px}
+.metric-card .mv{font-size:36px;font-weight:800;letter-spacing:-.02em;color:var(--red);margin-bottom:6px}
+.metric-card .md{font-size:13.5px;color:var(--muted);line-height:1.5}
+
+/* final */
+.final{background:linear-gradient(135deg,#111 0%,#1C1C1E 60%,#2A0B08 100%);color:#fff;border-bottom:none}
+.final h2{color:#fff}
+.final .lead{color:#B8B8BE}
+.final-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:36px 0}
+.final-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px}
+.final-card .fc-i{width:38px;height:38px;border-radius:10px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;margin-bottom:14px}
+.final-card h4{color:#fff;font-size:16px;margin-bottom:6px}
+.final-card p{color:#9A9AA2;font-size:13.5px;line-height:1.5}
+.final-metrics{display:flex;gap:40px;padding-top:28px;border-top:1px solid rgba(255,255,255,.12)}
+.final-metrics div span{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#7A7A80;margin-bottom:8px}
+.final-metrics div b{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em}
+
+/* assumptions */
+.assump{
+  margin-top:22px;padding:14px 18px;background:#FFF9F0;border-left:3px solid #F0B429;
+  border-radius:8px;font-size:13px;color:#6B5A2E;line-height:1.55;
+}
+.assump b{color:#4A3D14}
+
+/* print */
+@media print{
+  .progress{display:none}
+  .slide{min-height:auto;page-break-after:always;padding:48px 40px;border:none}
+  .slide:nth-child(even){background:#fff}
+  .cover,.final{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .browser{box-shadow:none;border:1px solid #ccc}
+}
+@media (max-width:1100px){
+  .cover .slide-inner{grid-template-columns:1fr}
+  .g4,.g3{grid-template-columns:repeat(2,1fr)}
+  .catalog{grid-template-columns:1fr}
+  .analytics-grid{grid-template-columns:1fr}
+  .persona{grid-template-columns:1fr}
+  .cjm{grid-template-columns:repeat(2,1fr)}
+  .balance{grid-template-columns:1fr}
+  h1{font-size:44px} h2{font-size:32px}
+  .final-grid{grid-template-columns:1fr}
+  .final-metrics{flex-wrap:wrap;gap:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+
+<!-- ============ 01 COVER ============ -->
+<section class="slide cover">
+  <div class="slide-inner">
+    <div>
+      <div class="cover-badge">Product Owner · Тестовое задание 2026</div>
+      <h1>Alfa Invest</h1>
+      <p class="lead">Инвестиционное приложение для розничных клиентов Альфа-Банка. Первый шаг в инвестиции — без страха и лишних сложностей.</p>
+      <div class="cover-meta">
+        <div><span>Продукт</span><b>Веб-платформа инвестиций</b></div>
+        <div><span>Рынок</span><b>Беларусь · БВФБ</b></div>
+        <div><span>Фокус</span><b>Новички 25–40 лет</b></div>
+      </div>
+    </div>
+    <div class="cover-card">
+      <div class="cc-top">
+        <div>
+          <div class="cc-label">Портфель</div>
+          <div class="cc-value">1 240,50 <span style="font-size:18px;color:#6E6E73">BYN</span></div>
+        </div>
+        <div class="cc-delta">▲ +2,3%</div>
+      </div>
+      <svg viewBox="0 0 420 130" style="width:100%;height:130px">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EF3124" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#EF3124" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,105 L42,98 L84,102 L126,80 L168,86 L210,62 L252,68 L294,48 L336,40 L378,28 L420,22 L420,130 L0,130 Z" fill="url(#cg)"/>
+        <path d="M0,105 L42,98 L84,102 L126,80 L168,86 L210,62 L252,68 L294,48 L336,40 L378,28 L420,22" fill="none" stroke="#EF3124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="420" cy="22" r="4.5" fill="#EF3124"/>
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#9A9AA0;margin-top:8px">
+        <span>Янв</span><span>Фев</span><span>Мар</span><span>Апр</span><span>Май</span><span>Июн</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 КОНТЕКСТ ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">01</span><span class="slide-kicker">Контекст</span></div>
+    <h2>Рынок растёт, но розница вкладывает мало</h2>
+    <p class="lead">Розничный интерес к БВФБ активно растёт: количество частных инвесторов и сделок увеличивается кратно. Но объём средств на счетах растёт медленнее — люди приходят, пробуют и уходят.</p>
+
+    <div class="grid g3" style="margin-bottom:24px">
+      <div class="card accent">
+        <div class="kpi">3 из 4</div>
+        <h4>не совершают вторую сделку</h4>
+        <p>Клиент покупает один инструмент и не возвращается — нет понимания, что делать дальше</p>
+      </div>
+      <div class="card">
+        <div class="kpi">~50 BYN</div>
+        <h4>средний порог входа</h4>
+        <p>Новичок готов начать с небольшой суммы, но боится комиссий и «потерять всё»</p>
+      </div>
+      <div class="card">
+        <div class="kpi">2 лидера</div>
+        <h4>Aigenis и банковские приложения</h4>
+        <p>Рынок концентрируется вокруг 2–3 игроков, у банков нет сильного инвестиционного продукта</p>
+      </div>
+    </div>
+
+    <div class="card" style="background:#111;border-color:#111;color:#fff">
+      <div style="display:flex;gap:32px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:280px">
+          <h4 style="color:#fff;font-size:18px;margin-bottom:8px">Возможность для Альфа-Банка</h4>
+          <p style="color:#9A9AA2;font-size:15px">У банка уже есть клиентская база, счёт и доверие. Не хватает только понятного инвестиционного входа. Мы строим его — как часть экосистемы, а не отдельный сервис.</p>
+        </div>
+        <div style="display:flex;gap:36px">
+          <div><div style="font-size:12px;color:#7A7A80;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Цель</div><div style="font-size:22px;font-weight:800">Вход за 3 минуты</div></div>
+          <div><div style="font-size:12px;color:#7A7A80;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Порог</div><div style="font-size:22px;font-weight:800">От 50 BYN</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="assump"><b>Допущение:</b> точные цифры по рынку требуют верификации у аналитики банка. Здесь использованы качественные тренды: рост интереса розницы к БВФБ и низкий retention после первой сделки — типичная картина для СНГ-рынков.</div>
+  </div>
+</section>
+
+<!-- ============ 03 АУДИТОРИЯ ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">02</span><span class="slide-kicker">Целевая аудитория</span></div>
+    <h2>Кто будет пользоваться продуктом</h2>
+    <p class="lead">Три сегмента. Фокус — новички: они дают объём, формируют привычку и со временем становятся активными инвесторами.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:24%">Сегмент</th>
+          <th style="width:14%">Доля новых</th>
+          <th style="width:26%">Ключевая боль</th>
+          <th>Что даёт продукт</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hl">
+          <td><b>Новички</b><br><span class="small">25–40 лет, доход 1 500–3 000 BYN</span></td>
+          <td><b>~55%</b></td>
+          <td>«Боюсь потерять деньги, не понимаю, с чего начать»</td>
+          <td>Онбординг под цель, готовый стартовый набор, объяснение терминов</td>
+        </tr>
+        <tr>
+          <td><b>Опытные, но пассивные</b><br><span class="small">30–50 лет, есть вклады</span></td>
+          <td>~30%</td>
+          <td>«Хочу больше, чем депозит, но нет времени разбираться»</td>
+          <td>Автоследование стратегиям, уведомления, сравнение с индексом</td>
+        </tr>
+        <tr>
+          <td><b>Активные</b><br><span class="small">25–45 лет, опыт 1+ год</span></td>
+          <td>~15%</td>
+          <td>«Нужны инструменты, аналитика, скорость»</td>
+          <td>Стакан, быстрые ордера, экспорт отчётов</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="assump" style="margin-top:26px"><b>Приоритет:</b> сегмент «новички» — потому что именно он определяет объём рынка и будущую базу активных клиентов. Продукт проектируется так, чтобы новичок не чувствовал себя «не в своей тарелке», но при этом не ограничивал опытных.</div>
+  </div>
+</section>
+
+<!-- ============ 04 ПЕРСОНА ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">03</span><span class="slide-kicker">Портрет пользователя</span></div>
+    <h2>Персона: Алексей, 32 года</h2>
+    <p class="lead" style="margin-bottom:32px">«Хочу, чтобы деньги работали, но не хочу каждый день смотреть графики»</p>
+
+    <div class="persona">
+      <div class="persona-card">
+        <div class="avatar">А</div>
+        <div class="name">Алексей</div>
+        <div class="role">Минск · менеджер · 32 года</div>
+        <div class="facts">
+          <div><span>Доход</span><b>2 200 BYN</b></div>
+          <div><span>Опыт</span><b>Новичок</b></div>
+          <div><span>Вклад</span><b>Есть, в BYN</b></div>
+          <div><span>Свободно</span><b>~300 BYN/мес</b></div>
+          <div><span>Цель</span><b>Накопить на авто</b></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="grid g2" style="margin-bottom:18px">
+          <div class="card">
+            <h4>😰 Боли</h4>
+            <p style="margin-top:10px;line-height:1.7">
+              • Не понимает разницу между акцией и облигацией<br>
+              • Боится, что комиссии «съедят» доход<br>
+              • Не знает, сколько нужно для старта<br>
+              • Опасается, что «это только для богатых»
+            </p>
+          </div>
+          <div class="card">
+            <h4>⚡ Триггеры</h4>
+            <p style="margin-top:10px;line-height:1.7">
+              • Увидел рекламу «купи акцию за 15 минут»<br>
+              • Коллега рассказал про купоны по облигациям<br>
+              • Ставка по вкладу снизилась<br>
+              • Хочет защитить сбережения от инфляции
+            </p>
+          </div>
+          <div class="card">
+            <h4>🎯 Что важно</h4>
+            <p style="margin-top:10px;line-height:1.7">
+              • Понятный язык без жаргона<br>
+              • Прозрачные комиссии до сделки<br>
+              • Возможность начать с малого<br>
+              • Не нужно быть «профи»
+            </p>
+          </div>
+          <div class="card accent">
+            <h4>💡 Инсайт</h4>
+            <p style="margin-top:10px;line-height:1.7;color:var(--ink-2)">
+              Алексею нужен не «инвестиционный терминал», а <b>проводник</b>. Он готов довериться банку, если тот объяснит, что делать, и не заставит чувствовать себя глупо.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 CJM ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">04</span><span class="slide-kicker">Путь клиента</span></div>
+    <h2>Customer Journey Map</h2>
+    <p class="lead">От первого касания до удержания. На каждом этапе — своя задача продукта.</p>
+
+    <div class="cjm">
+      <div class="cjm-head">Этап</div>
+      <div class="cjm-head">Действие</div>
+      <div class="cjm-head">Барьер</div>
+      <div class="cjm-head">Что нужно</div>
+      <div class="cjm-head">Наш ответ</div>
+      <div class="cjm-head">Метрика</div>
+
+      <div><div class="step">1. Осознание</div></div>
+      <div>Узнал об инвестициях из рекламы / соцсетей</div>
+      <div class="pain">«Это сложно, я не разберусь»</div>
+      <div>Простой оффер без жаргона</div>
+      <div>«От 50 BYN. Без опыта. С карты Альфа»</div>
+      <div>CTR рекламы</div>
+
+      <div><div class="step">2. Рассмотрение</div></div>
+      <div>Скачал приложение, открыл</div>
+      <div class="pain">Непонятно, что делать дальше</div>
+      <div>Онбординг за 3 шага</div>
+      <div>Опрос цели → рекомендация</div>
+      <div>Конверсия в регистрацию</div>
+
+      <div><div class="step">3. Первый вход</div></div>
+      <div>Проходит КУС, открывает счёт</div>
+      <div class="pain">Страх вводить данные</div>
+      <div>Прозрачность: «Зачем нам это?»</div>
+      <div>КУС через данные банка, без повторного ввода</div>
+      <div>% завершённых КУС</div>
+
+      <div><div class="step">4. Пополнение</div></div>
+      <div>Вносит первые 100 BYN</div>
+      <div class="pain">«А вдруг потеряю?»</div>
+      <div>Снижение риска</div>
+      <div>Демо-режим и объяснение риска</div>
+      <div>Конверсия в пополнение</div>
+
+      <div><div class="step">5. Первая покупка</div></div>
+      <div>Выбирает бумагу</div>
+      <div class="pain">Не знает, что выбрать</div>
+      <div>Рекомендации по цели</div>
+      <div>ТОП-5 + стартовый портфель</div>
+      <div>% первой сделки</div>
+
+      <div><div class="step">6. Удержание</div></div>
+      <div>Смотрит портфель</div>
+      <div class="pain">Забывает про приложение</div>
+      <div>Повод вернуться</div>
+      <div>Пуш: «Портфель вырос на 2%»</div>
+      <div>D30 retention</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 КОНКУРЕНТЫ ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">05</span><span class="slide-kicker">Конкурентный анализ</span></div>
+    <h2>Что берём и что делаем иначе</h2>
+    <p class="lead">Aigenis — лидер по розничным инвестициям на БВФБ. Т-Инвестиции — эталон UX для новичков. Мы соединяем силу банка с простотой лучших продуктов.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%">Критерий</th>
+          <th style="width:27%">Aigenis Invest</th>
+          <th style="width:27%">Т-Инвестиции</th>
+          <th style="width:28%;background:var(--red-soft)">Alfa Invest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Позиционирование</b></td>
+          <td>Брокер №1 для физлиц на БВФБ</td>
+          <td>Экосистема Т-Банка, доступ к MOEX</td>
+          <td class="hl">Банковское приложение + инвестиции</td>
+        </tr>
+        <tr>
+          <td><b>Аудитория</b></td>
+          <td>Опытные и новички, акцент на активных</td>
+          <td>Широкая, включая новичков</td>
+          <td class="hl">Новички и пассивные клиенты Альфа-Банка</td>
+        </tr>
+        <tr>
+          <td><b>Инструменты</b></td>
+          <td>Акции и облигации БВФБ + MOEX</td>
+          <td>Акции, облигации, фонды, валюта, металлы</td>
+          <td class="hl">Акции, облигации БВФБ, ЦФА (через BYNEX)</td>
+        </tr>
+        <tr>
+          <td><b>Онбординг</b></td>
+          <td>Регистрация в приложении</td>
+          <td>Через Т-Банк, мгновенно</td>
+          <td class="hl">Через Альфа-Банк, без повторного КУС</td>
+        </tr>
+        <tr>
+          <td><b>Ключевая фича</b></td>
+          <td>ТОП-5 бумаг, калькулятор, стакан котировок</td>
+          <td>Автоследование стратегиям, соцсеть «Пульс»</td>
+          <td class="hl">Онбординг под цель + прозрачная комиссия</td>
+        </tr>
+        <tr>
+          <td><b>Слабость</b></td>
+          <td>Интерфейс ориентирован на тех, кто уже понимает</td>
+          <td>Нет прямого доступа к БВФБ</td>
+          <td class="hl">Пока нет отдельного сильного продукта</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid g2" style="margin-top:26px">
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ Берём за основу</h4>
+        <p style="margin-top:10px;line-height:1.7">
+          <b>У Aigenis:</b> прозрачность торгового процесса, калькулятор, «Избранное»<br>
+          <b>У Т-Инвестиций:</b> автоследование стратегиям, простой язык для новичков
+        </p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--red)">
+        <h4>🚀 Делаем иначе</h4>
+        <p style="margin-top:10px;line-height:1.7">
+          <b>Онбординг под цель,</b> а не под продукт<br>
+          <b>Прозрачная комиссия</b> на каждом экране<br>
+          <b>Интеграция с банковским счётом</b> в один тап
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 ПОЗИЦИОНИРОВАНИЕ ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">06</span><span class="slide-kicker">Позиционирование</span></div>
+    <h2>Три принципа продукта</h2>
+    <p class="lead">Всё, что делаем, проверяется этими принципами. Если фича им противоречит — она не попадает в бэклог.</p>
+
+    <div class="grid g3">
+      <div class="card">
+        <div style="font-size:38px;margin-bottom:14px">🎯</div>
+        <h3 style="font-size:20px;margin-bottom:10px">Понятно с первого экрана</h3>
+        <p>Пользователь не должен ничего искать. Ценность, следующий шаг и сумма — видны сразу. Никаких терминалов и таблиц с 20 колонками.</p>
+      </div>
+      <div class="card accent">
+        <div style="font-size:38px;margin-bottom:14px">🔍</div>
+        <h3 style="font-size:20px;margin-bottom:10px">Прозрачно до сделки</h3>
+        <p>Комиссия, итоговая сумма и риск — показаны <b>до</b> подтверждения. Новичок не должен узнавать о списаниях из чека постфактум.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:38px;margin-bottom:14px">🔗</div>
+        <h3 style="font-size:20px;margin-bottom:10px">Внутри банка, а не рядом</h3>
+        <p>Один клиент, один счёт, один вход. Пополнение со своей карты — в один тап. Никаких переводов между сервисами и повторной идентификации.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px;background:#111;border-color:#111;color:#fff;padding:32px">
+      <div style="font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:#7A7A80;margin-bottom:14px;font-weight:700">Позиционирование одной строкой</div>
+      <div style="font-size:28px;font-weight:800;line-height:1.3;letter-spacing:-.02em">
+        «Инвестиции — это проще, чем кажется. <span style="color:var(--red)">Начните с 50 BYN</span> — прямо из приложения Альфа-Банка»
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 USER STORIES ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">07</span><span class="slide-kicker">Функционал</span></div>
+    <h2>User Stories</h2>
+    <p class="lead">От потребности пользователя — к конкретной фиче и приоритету.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:8%">ID</th>
+          <th style="width:14%">Как…</th>
+          <th style="width:30%">Я хочу…</th>
+          <th style="width:28%">Чтобы…</th>
+          <th style="width:20%">Приоритет</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>US-01</b></td><td>Новичок</td><td>Пройти онбординг за 3 минуты</td><td>Начать инвестировать без страха</td><td><span class="pill must">Must</span></td></tr>
+        <tr><td><b>US-02</b></td><td>Новичок</td><td>Увидеть рекомендованный стартовый портфель</td><td>Не выбирать из сотен бумаг</td><td><span class="pill must">Must</span></td></tr>
+        <tr><td><b>US-03</b></td><td>Клиент Альфа</td><td>Пополнить счёт со своей карты в один тап</td><td>Не вводить реквизиты</td><td><span class="pill must">Must</span></td></tr>
+        <tr><td><b>US-04</b></td><td>Инвестор</td><td>Купить бумагу с прозрачной комиссией</td><td>Понимать итоговую сумму</td><td><span class="pill must">Must</span></td></tr>
+        <tr><td><b>US-05</b></td><td>Инвестор</td><td>Видеть доходность портфеля в % и BYN</td><td>Оценивать результат</td><td><span class="pill must">Must</span></td></tr>
+        <tr><td><b>US-06</b></td><td>Новичок</td><td>Получить объяснение терминов простым языком</td><td>Разобраться без гугления</td><td><span class="pill should">Should</span></td></tr>
+        <tr><td><b>US-07</b></td><td>Инвестор</td><td>Сравнить портфель с индексом</td><td>Понять, не лучше ли купить ETF</td><td><span class="pill should">Should</span></td></tr>
+        <tr><td><b>US-08</b></td><td>Активный</td><td>Настроить уведомления о цене</td><td>Не пропустить точку входа</td><td><span class="pill could">Could</span></td></tr>
+        <tr><td><b>US-09</b></td><td>Инвестор</td><td>Экспортировать отчёт для налоговой</td><td>Упростить декларирование</td><td><span class="pill could">Could</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 09 MoSCoW ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">08</span><span class="slide-kicker">Приоритизация</span></div>
+    <h2>MoSCoW: что войдёт в первую версию</h2>
+    <p class="lead">Фокус на активации и первой сделке. Всё, что не помогает новичку дойти до покупки — во вторую волну.</p>
+
+    <div class="grid g2">
+      <div class="card" style="border-top:4px solid var(--red)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="color:var(--red)">Must have</h3>
+          <span class="pill must">v1 · 0–4 мес</span>
+        </div>
+        <p style="line-height:2;color:var(--ink-2)">
+          • Онбординг с опросом цели<br>
+          • Открытие счёта через данные банка<br>
+          • Пополнение с карты в один тап<br>
+          • Каталог с фильтрами и поиском<br>
+          • Покупка с прозрачной комиссией<br>
+          • Дашборд портфеля
+        </p>
+      </div>
+
+      <div class="card" style="border-top:4px solid #F0B429">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="color:var(--amber)">Should have</h3>
+          <span class="pill should">v1.5 · 4–7 мес</span>
+        </div>
+        <p style="line-height:2;color:var(--ink-2)">
+          • Рекомендации по цели<br>
+          • Сравнение с индексом<br>
+          • Образовательные подсказки<br>
+          • График доходности за период<br>
+          • Диверсификация по секторам
+        </p>
+      </div>
+
+      <div class="card" style="border-top:4px solid #1B5FCC">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="color:#1B5FCC">Could have</h3>
+          <span class="pill could">v2 · 7–12 мес</span>
+        </div>
+        <p style="line-height:2;color:var(--ink-2)">
+          • Автоследование стратегиям<br>
+          • Push-уведомления по цене<br>
+          • Налоговый отчёт<br>
+          • Социальная лента идей
+        </p>
+      </div>
+
+      <div class="card" style="border-top:4px solid #C9C9D0;background:#FAFAFC">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="color:var(--muted)">Won't have (v1)</h3>
+          <span class="pill wont">Не сейчас</span>
+        </div>
+        <p style="line-height:2;color:var(--muted)">
+          • Маржинальная торговля<br>
+          • Опционы и фьючерсы<br>
+          • Прямой доступ к MOEX<br>
+          • Криптовалюты
+        </p>
+      </div>
+    </div>
+
+    <div class="assump" style="margin-top:24px"><b>Логика приоритизации:</b> Must-фичи закрывают путь «скачал → открыл счёт → пополнил → купил». Без любой из них воронка рвётся. Should-фичи усиливают удержание, но не блокируют первую сделку. Could — работают на активных, которых пока меньшинство.</div>
+  </div>
+</section>
+
+<!-- ============ 10 МОКАП: ОНБОРДИНГ ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">09</span><span class="slide-kicker">Прототип · Экран 1 из 5</span></div>
+    <h2>Онбординг</h2>
+    <p class="lead" style="margin-bottom:24px">Первый экран — знакомство и выбор цели. Три шага: цель → опыт → сумма. После — открытие счёта через данные банка, без повторного КУС.</p>
+
+    <div class="mockup-wrap">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">invest.alfabank.by/welcome</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:560px">
+
+          <!-- left: branding -->
+          <div style="background:linear-gradient(140deg,#111 0%,#1C1C1E 60%,#3A0F0A 100%);color:#fff;padding:56px 48px;display:flex;flex-direction:column;justify-content:center">
+            <div style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:40px">
+              <span style="width:30px;height:30px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px">A</span>
+              Alfa Invest
+            </div>
+            <h3 style="font-size:38px;line-height:1.15;letter-spacing:-.02em;margin-bottom:18px">Инвестиции —<br>это проще,<br>чем кажется</h3>
+            <p style="color:#9A9AA2;font-size:15px;margin-bottom:34px;max-width:340px">Начните с небольшой суммы. Без опыта. Прямо из приложения Альфа-Банка.</p>
+            <div style="display:flex;flex-direction:column;gap:14px;font-size:14px">
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:20px;height:20px;border-radius:50%;background:rgba(239,49,36,.2);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:11px;font-weight:800">✓</span>От 50 BYN</div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:20px;height:20px;border-radius:50%;background:rgba(239,49,36,.2);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:11px;font-weight:800">✓</span>Без опыта и терминов</div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:20px;height:20px;border-radius:50%;background:rgba(239,49,36,.2);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:11px;font-weight:800">✓</span>Комиссия видна до покупки</div>
+            </div>
+          </div>
+
+          <!-- right: form -->
+          <div style="padding:56px 48px;display:flex;flex-direction:column;justify-content:center;background:#fff">
+            <div style="display:flex;gap:6px;margin-bottom:32px">
+              <div style="flex:1;height:4px;background:var(--red);border-radius:2px"></div>
+              <div style="flex:1;height:4px;background:#E6E6EB;border-radius:2px"></div>
+              <div style="flex:1;height:4px;background:#E6E6EB;border-radius:2px"></div>
+            </div>
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:10px">Шаг 1 из 3</div>
+            <h3 style="font-size:28px;margin-bottom:8px">Зачем вам инвестиции?</h3>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:26px">Это поможет подобрать стартовый набор</p>
+
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+              <div style="border:2px solid var(--red);background:var(--red-soft);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+                <span style="width:20px;height:20px;border-radius:50%;border:6px solid var(--red);flex:none"></span>
+                <div><b style="font-size:14.5px">Накопить на цель</b><div style="font-size:12.5px;color:var(--muted)">Авто, квартира, образование</div></div>
+              </div>
+              <div style="border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+                <span style="width:20px;height:20px;border-radius:50%;border:1.5px solid #C9C9D0;flex:none"></span>
+                <div><b style="font-size:14.5px">Пассивный доход</b><div style="font-size:12.5px;color:var(--muted)">Дивиденды и купоны</div></div>
+              </div>
+              <div style="border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px">
+                <span style="width:20px;height:20px;border-radius:50%;border:1.5px solid #C9C9D0;flex:none"></span>
+                <div><b style="font-size:14.5px">Просто попробовать</b><div style="font-size:12.5px;color:var(--muted)">Разобраться, как это работает</div></div>
+              </div>
+            </div>
+
+            <button class="btn btn-red" style="width:100%;height:50px;font-size:15px">Продолжить →</button>
+            <div class="note">Уже есть аккаунт? <b style="color:var(--red)">Войти</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:20px">
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">🎯 Цель</h4><p style="font-size:13.5px">Определяет рекомендации и подсказки</p></div>
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">⚡ Прогресс</h4><p style="font-size:13.5px">Виден всегда — снижает тревогу «сколько ещё»</p></div>
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">🔗 Один тап</h4><p style="font-size:13.5px">КУС через данные банка, без повторного ввода</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 МОКАП: ПОРТФЕЛЬ ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">10</span><span class="slide-kicker">Прототип · Экран 2 из 5</span></div>
+    <h2>Главная / Портфель</h2>
+    <p class="lead" style="margin-bottom:24px">Дашборд состояния инвестиций: стоимость, доходность в % и BYN, структура и быстрые действия.</p>
+
+    <div class="mockup-wrap">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">invest.alfabank.by/portfolio</div>
+        </div>
+        <div class="app">
+          <aside class="side">
+            <div class="logo"><i>A</i> Alfa Invest</div>
+            <nav class="nav">
+              <a class="active"><span class="ic">◧</span> Портфель</a>
+              <a><span class="ic">▤</span> Каталог</a>
+              <a><span class="ic">◔</span> Аналитика</a>
+              <a><span class="ic">⇄</span> История</a>
+              <a><span class="ic">⚙</span> Настройки</a>
+            </nav>
+            <div class="user">
+              <div class="av">А</div>
+              <div class="nm"><b>Алексей К.</b><span>Клиент Альфа-Банка</span></div>
+            </div>
+          </aside>
+
+          <main class="main">
+            <div class="main-head">
+              <div><h3>Портфель</h3><div class="sub">Обновлено сегодня в 14:32</div></div>
+              <button class="btn btn-ghost btn-sm">+ Пополнить</button>
+            </div>
+
+            <div class="balance">
+              <div>
+                <div class="label">Общая стоимость</div>
+                <div class="sum">1 240,50 <small>BYN</small></div>
+                <div class="delta">▲ +28,40 BYN · +2,3% <span class="abs">за месяц</span></div>
+                <div class="balance-actions">
+                  <button class="btn btn-red btn-sm">Купить</button>
+                  <button class="btn btn-ghost btn-sm">Продать</button>
+                </div>
+              </div>
+              <div class="balance-stats">
+                <div class="bstat"><span>Вложено</span><b>1 212,10 BYN</b></div>
+                <div class="bstat"><span>Прибыль</span><b class="up">+28,40 BYN</b></div>
+                <div class="bstat"><span>Дивиденды</span><b>18,20 BYN</b></div>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="ch-head">
+                <h4 style="font-size:15px">Динамика портфеля</h4>
+                <div class="seg"><span>1М</span><span class="on">6М</span><span>1Г</span><span>Всё</span></div>
+              </div>
+              <svg viewBox="0 0 900 160" style="width:100%;height:160px">
+                <defs>
+                  <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#EF3124" stop-opacity="0.18"/>
+                    <stop offset="100%" stop-color="#EF3124" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="40" x2="900" y2="40" stroke="#F0F0F3" stroke-width="1"/>
+                <line x1="0" y1="80" x2="900" y2="80" stroke="#F0F0F3" stroke-width="1"/>
+                <line x1="0" y1="120" x2="900" y2="120" stroke="#F0F0F3" stroke-width="1"/>
+                <path d="M0,128 L90,120 L180,124 L270,100 L360,106 L450,78 L540,84 L630,60 L720,52 L810,38 L900,30 L900,160 L0,160 Z" fill="url(#pg)"/>
+                <path d="M0,128 L90,120 L180,124 L270,100 L360,106 L450,78 L540,84 L630,60 L720,52 L810,38 L900,30" fill="none" stroke="#EF3124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="900" cy="30" r="5" fill="#EF3124"/>
+                <circle cx="900" cy="30" r="10" fill="#EF3124" opacity="0.15"/>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px">
+                <span>Янв</span><span>Фев</span><span>Мар</span><span>Апр</span><span>Май</span><span>Июн</span>
+              </div>
+            </div>
+
+            <div class="assets">
+              <div class="ah">
+                <h4>Мои активы</h4>
+                <span class="small">3 инструмента</span>
+              </div>
+
+              <div class="arow">
+                <div class="tick red">БК</div>
+                <div class="nm"><b>Беларуськалий</b><span>Акция · БВФБ</span></div>
+                <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <polyline points="0,22 14,20 28,23 42,15 56,17 70,11 85,9 100,5" fill="none" stroke="#12A150" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="price">1 486,00</div>
+                <div class="chg up">+3,1%</div>
+              </div>
+
+              <div class="arow">
+                <div class="tick">МФ</div>
+                <div class="nm"><b>Облигации Минфина</b><span>Облигация · 8,5%</span></div>
+                <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <polyline points="0,18 14,17 28,16 42,15 56,14 70,13 85,12 100,11" fill="none" stroke="#12A150" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="price">594,50</div>
+                <div class="chg up">+0,9%</div>
+              </div>
+
+              <div class="arow">
+                <div class="tick">АМ</div>
+                <div class="nm"><b>Амкодор</b><span>Акция · БВФБ</span></div>
+                <svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <polyline points="0,10 14,12 28,9 42,14 56,12 70,16 85,14 100,17" fill="none" stroke="#EF3124" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="price">168,20</div>
+                <div class="chg down">−0,6%</div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 МОКАП: КАТАЛОГ ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">11</span><span class="slide-kicker">Прототип · Экран 3 из 5</span></div>
+    <h2>Каталог бумаг</h2>
+    <p class="lead" style="margin-bottom:24px">Поиск и выбор инструментов. Слева — фильтры, в центре — список, справа — карточка выбранного инструмента с ключевыми метриками.</p>
+
+    <div class="mockup-wrap">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">invest.alfabank.by/catalog</div>
+        </div>
+        <div class="app">
+          <aside class="side">
+            <div class="logo"><i>A</i> Alfa Invest</div>
+            <nav class="nav">
+              <a><span class="ic">◧</span> Портфель</a>
+              <a class="active"><span class="ic">▤</span> Каталог</a>
+              <a><span class="ic">◔</span> Аналитика</a>
+              <a><span class="ic">⇄</span> История</a>
+              <a><span class="ic">⚙</span> Настройки</a>
+            </nav>
+            <div class="user">
+              <div class="av">А</div>
+              <div class="nm"><b>Алексей К.</b><span>Клиент Альфа-Банка</span></div>
+            </div>
+          </aside>
+
+          <main class="main">
+            <div class="main-head">
+              <div><h3>Каталог</h3><div class="sub">42 инструмента доступно</div></div>
+            </div>
+
+            <div class="search">🔍 Поиск по названию или тикеру</div>
+
+            <div class="catalog">
+              <!-- filters -->
+              <div class="filters">
+                <h4>Тип</h4>
+                <div class="fgroup">
+                  <div class="chk on"><i></i> Акции</div>
+                  <div class="chk on"><i></i> Облигации</div>
+                  <div class="chk"><i></i> ЦФА</div>
+                </div>
+                <h4>Сектор</h4>
+                <div class="fgroup">
+                  <div class="chk on"><i></i> Финансы</div>
+                  <div class="chk"><i></i> Промышленность</div>
+                  <div class="chk"><i></i> Госсектор</div>
+                  <div class="chk"><i></i> IT и связь</div>
+                </div>
+                <h4>Риск</h4>
+                <div class="fgroup">
+                  <div class="chk"><i></i> Низкий</div>
+                  <div class="chk on"><i></i> Средний</div>
+                  <div class="chk"><i></i> Высокий</div>
+                </div>
+              </div>
+
+              <!-- list -->
+              <div>
+                <div class="list">
+                  <div class="lrow" style="background:var(--red-soft)">
+                    <div class="nm"><b>★ Облигации Минфина</b><span>Рекомендуем · низкий риск</span></div>
+                    <div class="price">594,50</div>
+                    <div class="chg up" style="text-align:right;font-weight:700">+0,9%</div>
+                  </div>
+                  <div class="lrow">
+                    <div class="nm"><b>Беларуськалий</b><span>Акция · промышленность</span></div>
+                    <div class="price">1 486,00</div>
+                    <div class="chg up" style="text-align:right;font-weight:700">+3,1%</div>
+                  </div>
+                  <div class="lrow">
+                    <div class="nm"><b>Амкодор</b><span>Акция · промышленность</span></div>
+                    <div class="price">168,20</div>
+                    <div class="chg down" style="text-align:right;font-weight:700">−0,6%</div>
+                  </div>
+                  <div class="lrow">
+                    <div class="nm"><b>Приорбанк</b><span>Акция · финансы</span></div>
+                    <div class="price">92,40</div>
+                    <div class="chg up" style="text-align:right;font-weight:700">+1,2%</div>
+                  </div>
+                  <div class="lrow">
+                    <div class="nm"><b>Облигации МТЗ</b><span>Облигация · 9,1%</span></div>
+                    <div class="price">1 020,00</div>
+                    <div class="chg up" style="text-align:right;font-weight:700">+0,3%</div>
+                  </div>
+                  <div class="lrow">
+                    <div class="nm"><b>БПС-Сбербанк</b><span>Акция · финансы</span></div>
+                    <div class="price">78,10</div>
+                    <div class="chg down" style="text-align:right;font-weight:700">−0,4%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- card -->
+              <div class="side-card">
+                <div class="badge">Рекомендуем</div>
+                <h3>Облигации Минфина</h3>
+                <div class="sub">Государственные облигации · БВФБ</div>
+
+                <div style="font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px">594,50 <span style="font-size:16px;color:var(--muted);font-weight:600">BYN</span></div>
+                <div style="color:var(--green);font-weight:700;font-size:14px;margin-bottom:20px">▲ +0,9% за месяц</div>
+
+                <svg viewBox="0 0 260 70" style="width:100%;height:70px;margin-bottom:18px">
+                  <defs>
+                    <linearGradient id="sc" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#EF3124" stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color="#EF3124" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,52 L32,48 L64,50 L96,42 L128,38 L160,34 L192,30 L224,24 L260,20 L260,70 L0,70 Z" fill="url(#sc)"/>
+                  <path d="M0,52 L32,48 L64,50 L96,42 L128,38 L160,34 L192,30 L224,24 L260,20" fill="none" stroke="#EF3124" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+                <div class="stat-row"><span>Доходность</span><b>8,5% годовых</b></div>
+                <div class="stat-row"><span>Погашение</span><b>12.2027</b></div>
+                <div class="stat-row"><span>Риск</span><b>Низкий</b></div>
+                <div class="stat-row"><span>Мин. сумма</span><b>50 BYN</b></div>
+
+                <button class="btn btn-red" style="width:100%;height:46px;margin-top:20px">Купить</button>
+                <button class="btn btn-ghost" style="width:100%;height:42px;margin-top:8px;font-size:13px">Добавить в избранное</button>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13 МОКАП: ПОКУПКА ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">12</span><span class="slide-kicker">Прототип · Экран 4 из 5</span></div>
+    <h2>Покупка актива</h2>
+    <p class="lead" style="margin-bottom:24px">Экран сделки. Ключевой принцип — комиссия и итоговая сумма видны <b>до</b> подтверждения, а не в чеке после.</p>
+
+    <div class="mockup-wrap">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">invest.alfabank.by/catalog/minfin/order</div>
+        </div>
+        <div class="modal-stage">
+          <div class="blurred" style="padding:28px 32px">
+            <div style="height:32px;width:200px;background:#E6E6EB;border-radius:8px;margin-bottom:24px"></div>
+            <div style="display:grid;grid-template-columns:230px 1fr 300px;gap:18px">
+              <div style="height:400px;background:#fff;border-radius:16px;border:1px solid var(--line)"></div>
+              <div style="height:400px;background:#fff;border-radius:16px;border:1px solid var(--line)"></div>
+              <div style="height:400px;background:#fff;border-radius:16px;border:1px solid var(--line)"></div>
+            </div>
+          </div>
+
+          <div class="overlay">
+            <div class="modal">
+              <div class="modal-head">
+                <div>
+                  <h4>Покупка облигаций Минфина</h4>
+                  <div class="small" style="margin-top:2px">594,50 BYN за 1 шт.</div>
+                </div>
+                <div class="x">✕</div>
+              </div>
+
+              <div class="modal-body">
+                <div class="field">
+                  <label>Количество</label>
+                  <div class="input">
+                    <div class="qty">
+                      <span>−</span>
+                      <b style="font-size:17px">2</b>
+                      <span>+</span>
+                    </div>
+                    <span style="font-size:13px;color:var(--muted);font-weight:500">шт.</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Сумма сделки</label>
+                  <div class="input" style="background:#FAFAFC">
+                    <b>1 189,00</b>
+                    <span style="font-size:13px;color:var(--muted);font-weight:500">BYN</span>
+                  </div>
+                </div>
+
+                <div class="summary">
+                  <div class="r"><span>Цена за единицу</span><b>594,50 BYN</b></div>
+                  <div class="r"><span>Количество</span><b>2 шт.</b></div>
+                  <div class="r"><span>Комиссия брокера (0,3%)</span><b>3,57 BYN</b></div>
+                  <div class="r total"><span>Итого к оплате</span><b>1 192,57 BYN</b></div>
+                </div>
+              </div>
+
+              <div class="modal-foot">
+                <button class="btn btn-red">Подтвердить покупку</button>
+                <div class="note">Средства спишутся с вашего счёта в Альфа-Банке</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:20px">
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">💡 Прозрачность</h4><p style="font-size:13.5px">Комиссия отдельной строкой, не «спрятана» в цене</p></div>
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">⚖️ Контроль</h4><p style="font-size:13.5px">Пользователь видит итог и может изменить количество</p></div>
+      <div class="card" style="padding:18px"><h4 style="font-size:14px;margin-bottom:6px">✅ Статус</h4><p style="font-size:13.5px">После подтверждения — экран исполнения заявки</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14 МОКАП: АНАЛИТИКА ============ -->
+<section class="slide">
+  <div class="slide-inner wide">
+    <div class="slide-head"><span class="slide-num">13</span><span class="slide-kicker">Прототип · Экран 5 из 5</span></div>
+    <h2>Аналитика</h2>
+    <p class="lead" style="margin-bottom:24px">Глубокий анализ результатов и рисков: доходность за период, сравнение с индексом, диверсификация, налоги и дивиденды.</p>
+
+    <div class="mockup-wrap">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div class="url">invest.alfabank.by/analytics</div>
+        </div>
+        <div class="app">
+          <aside class="side">
+            <div class="logo"><i>A</i> Alfa Invest</div>
+            <nav class="nav">
+              <a><span class="ic">◧</span> Портфель</a>
+              <a><span class="ic">▤</span> Каталог</a>
+              <a class="active"><span class="ic">◔</span> Аналитика</a>
+              <a><span class="ic">⇄</span> История</a>
+              <a><span class="ic">⚙</span> Настройки</a>
+            </nav>
+            <div class="user">
+              <div class="av">А</div>
+              <div class="nm"><b>Алексей К.</b><span>Клиент Альфа-Банка</span></div>
+            </div>
+          </aside>
+
+          <main class="main">
+            <div class="main-head">
+              <div><h3>Аналитика портфеля</h3><div class="sub">Период: 6 месяцев</div></div>
+              <div class="seg"><span>1М</span><span class="on">6М</span><span>1Г</span><span>Всё</span></div>
+            </div>
+
+            <div class="chart-card">
+              <div class="ch-head">
+                <h4 style="font-size:15px">Доходность vs индекс БВФБ</h4>
+                <div style="display:flex;gap:18px;font-size:12.5px">
+                  <span style="display:flex;align-items:center;gap:6px"><i style="width:10px;height:10px;background:var(--red);border-radius:3px;display:block"></i>Портфель <b style="color:var(--green)">+4,2%</b></span>
+                  <span style="display:flex;align-items:center;gap:6px"><i style="width:10px;height:10px;background:#B8B8BE;border-radius:3px;display:block"></i>Индекс <b style="color:var(--muted)">+2,8%</b></span>
+                </div>
+              </div>
+              <svg viewBox="0 0 900 200" style="width:100%;height:200px">
+                <defs>
+                  <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#EF3124" stop-opacity="0.16"/>
+                    <stop offset="100%" stop-color="#EF3124" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="50" x2="900" y2="50" stroke="#F0F0F3"/>
+                <line x1="0" y1="100" x2="900" y2="100" stroke="#F0F0F3"/>
+                <line x1="0" y1="150" x2="900" y2="150" stroke="#F0F0F3"/>
+                <!-- index -->
+                <path d="M0,140 L100,134 L200,138 L300,126 L400,130 L500,118 L600,114 L700,106 L800,102 L900,96" fill="none" stroke="#B8B8BE" stroke-width="2" stroke-dasharray="6 5"/>
+                <!-- portfolio -->
+                <path d="M0,140 L100,130 L200,134 L300,110 L400,116 L500,92 L600,86 L700,68 L800,60 L900,48 L900,200 L0,200 Z" fill="url(#ag)"/>
+                <path d="M0,140 L100,130 L200,134 L300,110 L400,116 L500,92 L600,86 L700,68 L800,60 L900,48" fill="none" stroke="#EF3124" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="900" cy="48" r="5" fill="#EF3124"/>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px">
+                <span>Янв</span><span>Фев</span><span>Мар</span><span>Апр</span><span>Май</span><span>Июн</span>
+              </div>
+            </div>
+
+            <div class="analytics-grid">
+              <div class="chart-card" style="margin-bottom:0">
+                <div class="ch-head"><h4 style="font-size:15px">Диверсификация по секторам</h4></div>
+                <div class="donut-wrap">
+                  <svg class="donut" viewBox="0 0 42 42">
+                    <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#EF3124" stroke-width="6" stroke-dasharray="35 65" stroke-dashoffset="25"/>
+                    <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#1B5FCC" stroke-width="6" stroke-dasharray="30 70" stroke-dashoffset="-10"/>
+                    <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#12A150" stroke-width="6" stroke-dasharray="25 75" stroke-dashoffset="-40"/>
+                    <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#C9C9D0" stroke-width="6" stroke-dasharray="10 90" stroke-dashoffset="-65"/>
+                  </svg>
+                  <div class="legend">
+                    <div><i style="background:#EF3124"></i>Финансы <b>35%</b><span class="val">434 BYN</span></div>
+                    <div><i style="background:#1B5FCC"></i>Промышл. <b>30%</b><span class="val">372 BYN</span></div>
+                    <div><i style="background:#12A150"></i>Госсектор <b>25%</b><span class="val">310 BYN</span></div>
+                    <div><i style="background:#C9C9D0"></i>Кэш <b>10%</b><span class="val">124 BYN</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart-card" style="margin-bottom:0">
+                <div class="ch-head"><h4 style="font-size:15px">Налоги и дивиденды</h4></div>
+                <div class="stat-row"><span>Дивиденды получено</span><b class="up">+18,20 BYN</b></div>
+                <div class="stat-row"><span>Купоны получено</span><b class="up">+24,60 BYN</b></div>
+                <div class="stat-row"><span>Налог удержан</span><b>−12,40 BYN</b></div>
+                <div class="stat-row"><span>К доплате</span><b>0,00 BYN</b></div>
+                <div style="margin-top:16px;padding:14px;background:#FAFAFC;border-radius:10px;font-size:13px;color:var(--muted);line-height:1.5">
+                  Отчёт для налоговой формируется автоматически и доступен в разделе «История».
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15 МЕТРИКИ ============ -->
+<section class="slide">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num">14</span><span class="slide-kicker">Метрики успеха</span></div>
+    <h2>Как измерим успех</h2>
+    <p class="lead">Три группы метрик, привязанных к целям продукта. Цель — не «много регистраций», а доведённый до сделки и возвращающийся клиент.</p>
+
+    <div style="margin-bottom:32px">
+      <h4 style="font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:16px">Активация</h4>
+      <div class="grid g3">
+        <div class="metric-card">
+          <div class="mt">Конверсия в открытие счёта</div>
+          <div class="mv">35%</div>
+          <div class="md">От скачивания до первого пополнения</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Конверсия в первую сделку</div>
+          <div class="mv">60%</div>
+          <div class="md">От пополнения до покупки</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Время до первой сделки</div>
+          <div class="mv">≤ 15 мин</div>
+          <div class="md">От регистрации до первого ордера</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:32px">
+      <h4 style="font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:16px">Вовлечённость</h4>
+      <div class="grid g3">
+        <div class="metric-card">
+          <div class="mt">DAU / MAU</div>
+          <div class="mv">≥ 25%</div>
+          <div class="md">Частота возврата в продукт</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Средний чек первой сделки</div>
+          <div class="mv">≥ 100 BYN</div>
+          <div class="md">Средняя сумма первой покупки</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Retention D30</div>
+          <div class="mv">≥ 40%</div>
+          <div class="md">Возврат через месяц после первой сделки</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:16px">Монетизация</h4>
+      <div class="grid g3">
+        <div class="metric-card">
+          <div class="mt">ARPU</div>
+          <div class="mv">≥ 5 BYN</div>
+          <div class="md">Комиссии + спред, в месяц на активного</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Доля активных портфелей</div>
+          <div class="mv">≥ 50%</div>
+          <div class="md">Портфели с двумя и более активами</div>
+        </div>
+        <div class="metric-card">
+          <div class="mt">Кросс-продажа</div>
+          <div class="mv">15%</div>
+          <div class="md">Конверсия вкладчиков в инвесторов</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="assump" style="margin-top:28px"><b>Связь с целями продукта:</b> активация → рост числа сделок; вовлечённость → рост объёма розничных сделок; монетизация → комиссионный доход банка. Целевые значения — гипотеза для первых 6 месяцев, требуют валидации после запуска MVP.</div>
+  </div>
+</section>
+
+<!-- ============ 16 ОБРАЗ РЕЗУЛЬТАТА ============ -->
+<section class="slide final">
+  <div class="slide-inner">
+    <div class="slide-head"><span class="slide-num" style="color:#FF7A6E;border-color:#FF7A6E">15</span><span class="slide-kicker" style="color:#7A7A80">Образ результата</span></div>
+    <h2>Alfa Invest</h2>
+    <p class="lead">Инвестиции — это проще, чем кажется. Продукт, который превращает новичка в инвестора за один сеанс.</p>
+
+    <div class="final-grid">
+      <div class="final-card">
+        <div class="fc-i">1</div>
+        <h4>Онбординг за 3 минуты</h4>
+        <p>Опрос цели → рекомендация → открытие счёта через данные банка. Без повторного КУС.</p>
+      </div>
+      <div class="final-card">
+        <div class="fc-i">2</div>
+        <h4>Портфель в один тап</h4>
+        <p>Пополнение со своей карты. Покупка с прозрачной комиссией — итог виден до подтверждения.</p>
+      </div>
+      <div class="final-card">
+        <div class="fc-i">3</div>
+        <h4>Аналитика для решений</h4>
+        <p>Доходность, сравнение с индексом, диверсификация, налоги. Понятно, что делать дальше.</p>
+      </div>
+    </div>
+
+    <div class="final-metrics">
+      <div><span>Активация</span><b>35%</b></div>
+      <div><span>Первая сделка</span><b>60%</b></div>
+      <div><span>Retention D30</span><b>≥ 40%</b></div>
+      <div><span>ARPU</span><b>≥ 5 BYN</b></div>
+    </div>
+
+    <div style="margin-top:44px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px">
+      <div style="font-size:14px;color:#7A7A80;line-height:1.7">
+        <b style="color:#fff;display:block;margin-bottom:4px">Отличие от конкурентов</b>
+        Онбординг под цель · Прозрачная комиссия · Интеграция с банковским счётом
+      </div>
+      <div style="font-size:13px;color:#5A5A60">
+        Тестовое задание · Product Owner · 2026
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const bar = document.getElementById('bar');
+function updateProgress(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+  bar.style.width = p + '%';
+}
+window.addEventListener('scroll', updateProgress, {passive:true});
+window.addEventListener('resize', updateProgress);
+updateProgress();
+</script>
+</body>
+</html>
