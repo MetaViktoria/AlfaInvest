@@ -44,7 +44,7 @@
         else { const state=InvestStore.read(); state.onboarded=true; InvestStore.write(state); location.href="home.html"; }
       };
     }
-    if (InvestStore.read().onboarded) location.replace("home.html"); else draw();
+    draw();
   </script>
 </body>
 </html>
