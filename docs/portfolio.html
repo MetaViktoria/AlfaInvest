@@ -1,0 +1,7 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alfa Invest — Портфель</title><link rel="stylesheet" href="css/app.css"></head><body>
+<script src="js/data.js"></script><script src="js/store.js"></script><script src="js/nav.js"></script><script>
+InvestNav.render("portfolio"); const page=document.querySelector("#page"),state=InvestStore.read();
+page.innerHTML=`<div class="page-head"><div><div class="eyebrow">Инвестиции</div><h1>Портфель</h1><p class="sub">Структура, активы и свободные средства</p></div><a class="btn btn-line" href="analytics.html">Аналитика</a></div>
+<div class="grid grid-3" style="margin-bottom:18px"><a class="card" href="topup.html"><div class="eyebrow">Счёт</div><h2>Пополнить</h2><p class="sub">С карты Альфа-Банка</p></a><a class="card" href="withdraw.html"><div class="eyebrow">Средства</div><h2>Вывести</h2><p class="sub">На банковский счёт</p></a><a class="card" href="trade.html"><div class="eyebrow">Рынок</div><h2>Купить актив</h2><p class="sub">Каталог бумаг</p></a></div>
+<div class="grid grid-2"><section class="card"><h2>Активы</h2><div class="asset-list">${InvestNav.assetRows(Object.keys(state.holdings),true)}</div></section><section class="card"><h2>Избранное</h2><p class="sub" style="margin:6px 0 10px">Следите за идеями в один тап</p><div class="asset-list">${InvestNav.assetRows(state.favorites)}</div></section></div>`;
+</script></body></html>
