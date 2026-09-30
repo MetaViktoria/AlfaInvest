@@ -1,0 +1,15 @@
+:root {
+  --red: #ef3124;
+  --red-dark: #c4251a;
+  --red-soft: #fff1f0;
+  --ink: #121214;
+  --muted: #6e6e73;
+  --line: #e6e6eb;
+  --surface: #ffffff;
+  --surface-soft: #f6f6f8;
+  --green: #168a45;
+  --amber: #a65e00;
+  --sidebar: #151516;
+  --radius: 18px;
+  --shadow: 0 10px 32px rgba(15, 15, 15, .08);
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alfa Invest — онбординг</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <main class="main" style="max-width:1040px;padding-top:8vh">
+    <div class="grid grid-2" style="box-shadow:var(--shadow);border-radius:24px;overflow:hidden;background:#fff">
+      <section style="padding:48px;background:linear-gradient(145deg,#121214,#38100c);color:#fff;min-height:560px;display:flex;flex-direction:column;justify-content:center">
+        <a class="brand" href="index.html" style="padding:0;margin-bottom:44px"><span class="brand-mark">A</span>Alfa Invest</a>
+        <h1 style="font-size:46px">Инвестиции —<br>это проще,<br>чем кажется</h1>
+        <p style="color:#bbbcc3;margin-top:18px;max-width:330px">Начните с небольшой суммы. Понятно, прозрачно, прямо из Альфа-Банка.</p>
+        <div style="display:grid;gap:13px;margin-top:34px;color:#eee">
+          <span>✓ От 50 BYN</span><span>✓ Без сложных терминов</span><span>✓ Комиссия видна до покупки</span>
+        </div>
+      </section>
+      <section style="padding:48px;min-height:560px;display:flex;flex-direction:column;justify-content:center">
+        <div id="onboarding"></div>
+      </section>
+    </div>
+  </main>
+  <script src="js/data.js"></script><script src="js/store.js"></script>
+  <script>
+    const stepData = [
+      { title: "Зачем вам инвестиции?", caption: "Подберём понятную отправную точку", options: ["Накопить на цель", "Получать пассивный доход", "Просто попробовать"] },
+      { title: "Есть ли опыт?", caption: "Объясним только то, что действительно нужно", options: ["Я начинаю", "Покупал(а) активы", "Уверенно инвестирую"] },
+      { title: "С какой суммы начнём?", caption: "Её всегда можно изменить", options: ["50 BYN", "500 BYN", "1 000 BYN"] }
+    ];
+    let step = 0, choice = 0;
+    function draw() {
+      const item = stepData[step];
+      document.querySelector("#onboarding").innerHTML = `
+        <div style="display:flex;gap:5px;margin-bottom:32px">${[0,1,2].map(i=>`<i style="height:4px;flex:1;border-radius:3px;background:${i<=step?"var(--red)":"var(--line)"}"></i>`).join("")}</div>
+        <div class="eyebrow">Шаг ${step+1} из 3</div><h2 style="font-size:29px">${item.title}</h2><p class="sub" style="margin:8px 0 24px">${item.caption}</p>
+        <div class="grid" style="gap:9px">${item.options.map((option,i)=>`<button class="choice btn ${choice===i?"btn-soft":"btn-line"}" style="justify-content:flex-start;height:58px" data-i="${i}">${option}</button>`).join("")}</div>
+        <button class="btn btn-red" style="width:100%;margin-top:24px" id="next">${step===2?"Открыть инвест-счёт":"Продолжить"}</button>
+        <p class="sub" style="text-align:center;font-size:12px;margin-top:14px">Счёт откроется по данным Альфа-Банка</p>`;
+      document.querySelectorAll(".choice").forEach(button=>button.onclick=()=>{choice=+button.dataset.i;draw();});
+      document.querySelector("#next").onclick=()=> {
+        if (step < 2) { step++; choice = 0; draw(); }
+        else { const state=InvestStore.read(); state.onboarded=true; InvestStore.write(state); location.href="home.html"; }
+      };
+    }
+    if (InvestStore.read().onboarded) location.replace("home.html"); else draw();
+  </script>
+</body>
+</html>
