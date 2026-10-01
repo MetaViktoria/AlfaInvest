@@ -1,2 +1,54 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alfa Invest — Настройка главной</title><link rel="stylesheet" href="css/app.css"></head><body>
-<script src="js/data.js"></script><script src="js/store.js"></script><script src="js/nav.js"></script><script>InvestNav.render("home");const page=document.querySelector("#page"),state=InvestStore.read();page.innerHTML=`<div class="order-layout"><a class="sub" href="home.html">← Главная</a><div class="card" style="margin-top:18px"><div class="eyebrow">Персонализация</div><h1 style="font-size:30px">Настроить главную</h1><p class="sub" style="margin:8px 0 20px">Выберите блоки, которые хотите видеть в обзоре.</p><div class="settings"><label class="setting"><span><b>График портфеля</b><br><small class="sub">Доходность за период</small></span><input class="switch" type="checkbox" id="chart" ${state.homeBlocks.chart?"checked":""}></label><label class="setting"><span><b>Избранное</b><br><small class="sub">Быстрый доступ к бумагам</small></span><input class="switch" type="checkbox" id="favorites" ${state.homeBlocks.favorites?"checked":""}></label></div><button class="btn btn-red" style="width:100%;margin-top:22px" id="save">Сохранить</button></div></div>`;document.querySelector("#save").onclick=()=>{const s=InvestStore.read();s.homeBlocks={chart:document.querySelector("#chart").checked,favorites:document.querySelector("#favorites").checked};InvestStore.write(s);location.href="home.html"};</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alfa Invest — Настройка главной</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/nav.js"></script>
+<script>
+InvestNav.render("home");
+const page = document.querySelector("#page");
+const state = InvestStore.read();
+page.innerHTML = `
+  <div class="order-layout">
+    <a class="sub" href="home.html">← Главная</a>
+    <div class="card" style="margin-top:18px">
+      <div class="eyebrow">Персонализация</div>
+      <h1 style="font-size:30px">Настроить главную</h1>
+      <p class="sub" style="margin:8px 0 20px">Выберите блоки, которые хотите видеть в обзоре.</p>
+      <div class="settings">
+        <label class="setting">
+          <span><b>Стартовый портфель</b><br><small class="sub">Рекомендации по вашей цели</small></span>
+          <input class="switch" type="checkbox" id="starter" ${state.homeBlocks.starter !== false ? "checked" : ""}>
+        </label>
+        <label class="setting">
+          <span><b>График портфеля</b><br><small class="sub">Доходность за период</small></span>
+          <input class="switch" type="checkbox" id="chart" ${state.homeBlocks.chart ? "checked" : ""}>
+        </label>
+        <label class="setting">
+          <span><b>Избранное</b><br><small class="sub">Быстрый доступ к бумагам</small></span>
+          <input class="switch" type="checkbox" id="favorites" ${state.homeBlocks.favorites ? "checked" : ""}>
+        </label>
+      </div>
+      <button class="btn btn-red" style="width:100%;margin-top:22px" id="save">Сохранить</button>
+    </div>
+  </div>
+`;
+document.querySelector("#save").onclick = () => {
+  const next = InvestStore.read();
+  next.homeBlocks = {
+    starter: document.querySelector("#starter").checked,
+    chart: document.querySelector("#chart").checked,
+    favorites: document.querySelector("#favorites").checked
+  };
+  InvestStore.write(next);
+  location.href = "home.html";
+};
+</script>
+</body>
+</html>

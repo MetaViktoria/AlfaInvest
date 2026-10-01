@@ -1,2 +1,61 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alfa Invest — Помощь</title><link rel="stylesheet" href="css/app.css"></head><body>
-<script src="js/data.js"></script><script src="js/store.js"></script><script src="js/nav.js"></script><script>InvestNav.render("help");document.querySelector("#page").innerHTML=`<div class="page-head"><div><div class="eyebrow">Поддержка</div><h1>Помощь</h1><p class="sub">Отвечаем просто и по делу</p></div></div><div class="grid grid-2"><section class="card"><h2>Комиссии</h2><div class="row"><span>Покупка / продажа</span><b>0,3%</b></div><div class="row"><span>Пополнение</span><b>Бесплатно</b></div><div class="row"><span>Вывод</span><b>Бесплатно</b></div></section><section class="card"><h2>Видеообучение</h2><p class="sub" style="margin:8px 0 16px">Пять коротких уроков для первого портфеля.</p><button class="btn btn-line" onclick="alert('Видео откроется в полной версии продукта')">Смотреть уроки</button></section><section class="card"><h2>Чат-бот</h2><p class="sub" style="margin:8px 0 16px">Подскажу, как найти бумагу или посмотреть комиссию.</p><button class="btn btn-red" id="chat">Задать вопрос</button><p id="answer" class="sub" style="margin-top:12px"></p></section><section class="card"><h2>Контакты</h2><p class="sub" style="margin-top:8px">Круглосуточно в приложении</p><p style="margin-top:14px"><b>198</b> · контакт-центр<br><b>invest@alfabank.by</b></p><button class="btn btn-line" style="margin-top:16px" onclick="alert('Соединяем с оператором…')">Позвать оператора</button></section></div>`;document.querySelector("#chat").onclick=()=>document.querySelector("#answer").textContent="Комиссия видна до подтверждения сделки. Нужна помощь с выбором бумаги?";</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alfa Invest — Помощь</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/nav.js"></script>
+<script>
+InvestNav.render("help");
+document.querySelector("#page").innerHTML = `
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Поддержка</div>
+      <h1>Помощь</h1>
+      <p class="sub">Термины простым языком и ответы по делу</p>
+    </div>
+  </div>
+  <div class="grid grid-2">
+    <section class="card">
+      <h2>Комиссии</h2>
+      <div class="row"><span>Покупка / продажа</span><b>0,1%</b></div>
+      <div class="row"><span>Пополнение</span><b>Бесплатно</b></div>
+      <div class="row"><span>Вывод</span><b>Бесплатно</b></div>
+    </section>
+    <section class="card">
+      <h2>Словарь инвестора</h2>
+      ${InvestData.terms.map(item =>
+        `<div class="term-card"><b>${item.term}</b><span class="sub">${item.text}</span></div>`
+      ).join("")}
+    </section>
+    <section class="card">
+      <h2>Видеообучение</h2>
+      <p class="sub" style="margin:8px 0 16px">Пять коротких уроков для первого портфеля.</p>
+      <button class="btn btn-line" onclick="alert('Видео откроется в полной версии продукта')">Смотреть уроки</button>
+    </section>
+    <section class="card">
+      <h2>Чат-бот</h2>
+      <p class="sub" style="margin:8px 0 16px">Подскажу, как найти бумагу или разобрать термин.</p>
+      <button class="btn btn-red" id="chat">Задать вопрос</button>
+      <p id="answer" class="sub" style="margin-top:12px"></p>
+    </section>
+    <section class="card">
+      <h2>Контакты</h2>
+      <p class="sub" style="margin-top:8px">Круглосуточно в приложении</p>
+      <p style="margin-top:14px"><b>198</b> · контакт-центр<br><b>invest@alfabank.by</b></p>
+      <button class="btn btn-line" style="margin-top:16px" onclick="alert('Соединяем с оператором…')">Позвать оператора</button>
+    </section>
+  </div>
+`;
+document.querySelector("#chat").onclick = () => {
+  document.querySelector("#answer").textContent =
+    "Комиссия 0,1% видна до подтверждения. В Pro-режиме доступны стакан и лимитные заявки. Нужна помощь с выбором бумаги?";
+};
+</script>
+</body>
+</html>

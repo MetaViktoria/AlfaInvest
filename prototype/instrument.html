@@ -1,6 +1,63 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alfa Invest — Бумага</title><link rel="stylesheet" href="css/app.css"></head><body>
-<script src="js/data.js"></script><script src="js/store.js"></script><script src="js/nav.js"></script><script>
-InvestNav.render("trade");const page=document.querySelector("#page"),id=new URLSearchParams(location.search).get("id")||"minfin",asset=InvestData.assets.find(a=>a.id===id),fav=InvestStore.read().favorites.includes(id);
-page.innerHTML=`<a class="sub" href="trade.html">← К торгам</a><div class="page-head" style="margin-top:18px"><div><span class="badge">${asset.recommended?"Рекомендуем":"БВФБ"}</span><h1 style="margin-top:10px">${asset.name}</h1><p class="sub">${asset.type} · ${asset.sector}</p></div><button class="btn btn-line" id="favorite">${fav?"★ В избранном":"☆ В избранное"}</button></div><div class="grid grid-2"><section class="card"><div style="font-size:37px;font-weight:800">${InvestData.format(asset.price)} <small class="sub">BYN</small></div><p class="${asset.change>=0?"positive":"negative"}">${asset.change>=0?"+":""}${asset.change}% за месяц</p><svg class="chart" viewBox="0 0 900 190"><path class="line" d="M0 150L100 140L200 150L300 116L400 122L500 88L600 94L700 60L800 63L900 36"/></svg><div class="row"><span>Доходность</span><b>${asset.yield}</b></div><div class="row"><span>Риск</span><b>${asset.risk}</b></div><div class="row"><span>Минимальная сумма</span><b>${InvestData.format(asset.price)} BYN</b></div></section><aside class="card"><h2>Действие</h2><p class="sub" style="margin:8px 0 20px">Итог сделки и комиссия будут видны до подтверждения.</p><div class="grid"><a class="btn btn-red" href="order.html?id=${id}&side=buy">Купить</a><a class="btn btn-line" href="order.html?id=${id}&side=sell">Продать</a></div></aside></div>`;
-document.querySelector("#favorite").onclick=()=>{InvestStore.toggleFavorite(id);location.reload()};
-</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alfa Invest — Бумага</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/nav.js"></script>
+<script>
+InvestNav.render("trade");
+const page = document.querySelector("#page");
+const id = new URLSearchParams(location.search).get("id") || "minfin";
+const asset = InvestData.assetById(id);
+const fav = InvestStore.read().favorites.includes(id);
+
+if (!asset) {
+  page.innerHTML = `<div class="card"><h1>Инструмент не найден</h1><a class="btn btn-red" href="trade.html">К каталогу</a></div>`;
+} else {
+  page.innerHTML = `
+    <a class="sub" href="trade.html">← К каталогу</a>
+    <div class="page-head" style="margin-top:18px">
+      <div>
+        <span class="badge">${asset.recommended ? "Рекомендуем" : "БВФБ"}</span>
+        <h1 style="margin-top:10px">${asset.name}</h1>
+        <p class="sub">${asset.type} · ${asset.sector} · риск: ${asset.risk}</p>
+      </div>
+      <button class="btn btn-line" id="favorite">${fav ? "★ В избранном" : "☆ В избранное"}</button>
+    </div>
+    <div class="grid grid-2">
+      <section class="card">
+        <div style="font-size:37px;font-weight:800">${InvestData.format(asset.price)} <small class="sub">BYN</small></div>
+        <p class="${asset.change >= 0 ? "positive" : "negative"}">${asset.change >= 0 ? "+" : ""}${asset.change}% за месяц</p>
+        <svg class="chart" viewBox="0 0 900 190" preserveAspectRatio="none">
+          <path class="line" d="M0 150L100 140L200 150L300 116L400 122L500 88L600 94L700 60L800 63L900 36"/>
+        </svg>
+        <div class="row"><span>Доходность</span><b>${asset.yield}</b></div>
+        <div class="row"><span>Риск</span><b>${asset.risk}</b></div>
+        <div class="row"><span>Сектор</span><b>${asset.sector}</b></div>
+        <div class="row"><span>Минимальная сумма</span><b>${InvestData.format(asset.price)} BYN</b></div>
+      </section>
+      <aside class="card">
+        <h2>Действие</h2>
+        <p class="sub" style="margin:8px 0 20px">В простом режиме — быстрая покупка. В Pro — стакан и типы заявок.</p>
+        <div class="grid">
+          <a class="btn btn-red" href="order.html?id=${id}&side=buy">Купить</a>
+          <a class="btn btn-line" href="order.html?id=${id}&side=sell">Продать</a>
+        </div>
+        <div class="notice" style="margin-top:18px">Комиссия 0,1% и итоговая сумма видны до подтверждения.</div>
+      </aside>
+    </div>
+  `;
+  document.querySelector("#favorite").onclick = () => {
+    InvestStore.toggleFavorite(id);
+    location.reload();
+  };
+}
+</script>
+</body>
+</html>

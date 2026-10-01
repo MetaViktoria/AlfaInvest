@@ -1,5 +1,235 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Alfa Invest — Сделка</title><link rel="stylesheet" href="css/app.css"></head><body>
-<script src="js/data.js"></script><script src="js/store.js"></script><script src="js/nav.js"></script><script>
-InvestNav.render("trade");const page=document.querySelector("#page"),params=new URLSearchParams(location.search),asset=InvestData.assets.find(a=>a.id===(params.get("id")||"minfin")),side=params.get("side")==="sell"?"Продажа":"Покупка";let completed=false;
-function draw(){const quantity=Math.max(1,+document.querySelector("#quantity")?.value||1),subtotal=asset.price*quantity,commission=subtotal*.003,total=side==="Покупка"?subtotal+commission:subtotal-commission;page.innerHTML=`<div class="order-layout"><a class="sub" href="instrument.html?id=${asset.id}">← ${asset.name}</a><div class="card" style="margin-top:18px"><div class="eyebrow">${side}</div><h1 style="font-size:30px">${asset.name}</h1><p class="sub">${InvestData.format(asset.price)} BYN за 1 шт.</p>${completed?`<div class="notice" style="margin-top:20px">Заявка исполнена. Портфель и свободные средства обновлены.</div><a class="btn btn-red" href="home.html">Перейти на главную</a>`:`<div class="field" style="margin-top:24px"><label>Количество лотов</label><input id="quantity" type="number" min="1" value="${quantity}"></div><div class="row"><span>Цена</span><b>${InvestData.format(subtotal)} BYN</b></div><div class="row"><span>Комиссия брокера (0,3%)</span><b>${InvestData.format(commission)} BYN</b></div><div class="row" style="font-size:18px"><b>${side==="Покупка"?"Итого к оплате":"К зачислению"}</b><b>${InvestData.format(total)} BYN</b></div><button class="btn btn-red" style="width:100%;margin-top:20px" id="confirm">Подтвердить ${side.toLowerCase()}</button><p class="sub" style="font-size:12px;text-align:center;margin-top:12px">Учебный прототип. Реальные средства не списываются.</p>`}</div></div>`;if(!completed){document.querySelector("#quantity").oninput=draw;document.querySelector("#confirm").onclick=()=>{InvestStore.placeOrder({asset:asset.id,side,quantity});completed=true;draw()}}}draw();
-</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alfa Invest — Сделка</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/nav.js"></script>
+<script>
+InvestNav.render("trade");
+const page = document.querySelector("#page");
+const params = new URLSearchParams(location.search);
+const asset = InvestData.assetById(params.get("id") || "minfin");
+const side = params.get("side") === "sell" ? "Продажа" : "Покупка";
+const state = InvestStore.read();
+const book = InvestData.orderBook(asset);
+
+let proMode = !!state.proMode;
+let orderType = "market";
+let quantity = 1;
+let limitPrice = book.bestAsk;
+let triggerPrice = book.bestBid;
+let trailPercent = 2;
+let timeInForce = "day";
+let message = null;
+let error = null;
+let completedOrder = null;
+
+if (!asset) {
+  page.innerHTML = `<div class="card"><h1>Инструмент не найден</h1><a class="btn btn-red" href="trade.html">К каталогу</a></div>`;
+} else {
+  draw();
+}
+
+function selectedPrice() {
+  if (orderType === "market") return asset.price;
+  if (orderType === "limit") return +limitPrice || asset.price;
+  if (orderType === "trailing") return asset.price;
+  return +triggerPrice || asset.price;
+}
+
+function calc() {
+  const qty = Math.max(1, Math.floor(+quantity || 1));
+  const price = selectedPrice();
+  const subtotal = price * qty;
+  const commission = InvestStore.commission(subtotal);
+  const total = side === "Покупка" ? subtotal + commission : subtotal - commission;
+  return { qty, price, subtotal, commission, total };
+}
+
+function orderBookHtml() {
+  const askRows = [...book.asks].reverse().map(level => {
+    const width = Math.max(12, Math.round((level.quantity / book.maxQty) * 100));
+    return `<div class="orderbook-row" data-side="ask" data-price="${level.price}">
+      <span class="bar ask" style="width:${width}%"></span>
+      <span></span>
+      <span class="px">${InvestData.format(level.price)}</span>
+      <span class="ask">${InvestData.formatQty(level.quantity)}</span>
+    </div>`;
+  }).join("");
+  const bidRows = book.bids.map(level => {
+    const width = Math.max(12, Math.round((level.quantity / book.maxQty) * 100));
+    return `<div class="orderbook-row" data-side="bid" data-price="${level.price}">
+      <span class="bar bid" style="width:${width}%"></span>
+      <span class="bid">${InvestData.formatQty(level.quantity)}</span>
+      <span class="px">${InvestData.format(level.price)}</span>
+      <span></span>
+    </div>`;
+  }).join("");
+  return `
+    <div class="orderbook">
+      <div class="orderbook-meta">
+        <div class="pill"><span>Лучший bid</span><b class="positive">${InvestData.format(book.bestBid)}</b></div>
+        <div class="pill"><span>Спред</span><b>${InvestData.format(book.spread)}</b></div>
+        <div class="pill"><span>Лучший ask</span><b>${InvestData.format(book.bestAsk)}</b></div>
+      </div>
+      <div class="orderbook-head"><span>Покупка</span><span style="text-align:center">Цена</span><span style="text-align:right">Продажа</span></div>
+      ${askRows}
+      <div class="notice" style="margin:4px 0;text-align:center">Рыночная цена · ${InvestData.format(asset.price)} BYN</div>
+      ${bidRows}
+      <p class="sub" style="font-size:12px">Нажмите на уровень, чтобы подставить цену в заявку</p>
+    </div>
+  `;
+}
+
+function fieldsHtml() {
+  const type = InvestData.orderTypes.find(entry => entry.id === orderType);
+  let extra = "";
+  if (orderType === "limit") {
+    extra = `<div class="field"><label>Лимитная цена, BYN</label><input id="limitPrice" type="number" step="0.01" min="0.01" value="${limitPrice}"></div>`;
+  } else if (orderType === "stop" || orderType === "take") {
+    extra = `<div class="field"><label>${orderType === "stop" ? "Стоп-цена" : "Целевая цена"}, BYN</label><input id="triggerPrice" type="number" step="0.01" min="0.01" value="${triggerPrice}"></div>`;
+  } else if (orderType === "trailing") {
+    extra = `<div class="field"><label>Отступ trailing, %</label><input id="trailPercent" type="number" step="0.1" min="0.1" value="${trailPercent}"></div>`;
+  }
+  if (proMode && orderType !== "market") {
+    extra += `<div class="field"><label>Срок действия</label><select id="timeInForce"><option value="day" ${timeInForce === "day" ? "selected" : ""}>До конца дня</option><option value="gtc" ${timeInForce === "gtc" ? "selected" : ""}>До отмены</option></select></div>`;
+  }
+  return `
+    ${proMode ? `<div class="order-types">${InvestData.orderTypes.map(entry =>
+      `<button type="button" class="${orderType === entry.id ? "active" : ""}" data-type="${entry.id}">${entry.label}</button>`
+    ).join("")}</div><p class="order-hint">${type.hint}</p>` : ""}
+    <div class="field"><label>Количество лотов</label><input id="quantity" type="number" min="1" value="${quantity}"></div>
+    ${extra}
+  `;
+}
+
+function draw() {
+  const { qty, price, subtotal, commission, total } = calc();
+  const held = InvestStore.read().holdings[asset.id] || 0;
+  const cash = InvestStore.read().cash;
+  const resultBanner = completedOrder
+    ? `<div class="success-banner">${completedOrder.status === "Исполнена"
+      ? `Заявка ${completedOrder.id} исполнена. Портфель и свободные средства обновлены.`
+      : `Заявка ${completedOrder.id} (${completedOrder.typeLabel}) выставлена и ожидает исполнения.`}</div>
+       <div class="button-row"><a class="btn btn-red" href="trade.html">К каталогу и истории</a><a class="btn btn-line" href="portfolio.html">В портфель</a></div>`
+    : "";
+
+  page.innerHTML = `
+    <div class="order-layout ${proMode ? "pro" : ""}">
+      <div class="page-head" style="margin-bottom:14px">
+        <div>
+          <a class="sub" href="instrument.html?id=${asset.id}">← ${asset.name}</a>
+          <div class="eyebrow" style="margin-top:14px">${side}</div>
+          <h1 style="font-size:30px">${asset.name}</h1>
+          <p class="sub">${InvestData.format(asset.price)} BYN · в портфеле ${held} шт. · свободно ${InvestData.format(cash)} BYN</p>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Режим заявки">
+          <button type="button" class="${proMode ? "" : "active"}" id="simpleMode" data-testid="order-mode-simple">Простой</button>
+          <button type="button" class="pro ${proMode ? "active" : ""}" id="proModeBtn" data-testid="order-mode-pro">Pro</button>
+        </div>
+      </div>
+      ${error ? `<div class="error-banner">${error}</div>` : ""}
+      ${message ? `<div class="success-banner">${message}</div>` : ""}
+      ${completedOrder ? `<div class="card">${resultBanner}</div>` : `
+      <div class="${proMode ? "order-pro-grid" : ""}">
+        ${proMode ? `<section class="card"><div class="row"><h2>Стакан</h2><span class="badge">Демо</span></div>${orderBookHtml()}</section>` : ""}
+        <section class="card">
+          ${fieldsHtml()}
+          <div class="row"><span>Расчётная цена</span><b>${InvestData.format(price)} BYN</b></div>
+          <div class="row"><span>Сумма</span><b>${InvestData.format(subtotal)} BYN</b></div>
+          <div class="row"><span>Комиссия брокера (0,1%)</span><b>${InvestData.format(commission)} BYN</b></div>
+          <div class="row" style="font-size:18px"><b>${side === "Покупка" ? "Итого к оплате" : "К зачислению"}</b><b>${InvestData.format(total)} BYN</b></div>
+          <button class="btn btn-red" style="width:100%;margin-top:20px" id="confirm">${orderType === "market" ? `Подтвердить ${side.toLowerCase()}` : "Выставить заявку"}</button>
+          <p class="sub" style="font-size:12px;text-align:center;margin-top:12px">Тестовое задание. Интерактивный прототип. Реальные средства не списываются.</p>
+        </section>
+      </div>`}
+    </div>
+  `;
+
+  document.querySelector("#simpleMode")?.addEventListener("click", () => {
+    proMode = false;
+    orderType = "market";
+    InvestStore.setProMode(false);
+    draw();
+  });
+  document.querySelector("#proModeBtn")?.addEventListener("click", () => {
+    proMode = true;
+    InvestStore.setProMode(true);
+    draw();
+  });
+
+  if (completedOrder) return;
+
+  document.querySelector("#quantity")?.addEventListener("change", e => {
+    quantity = Math.max(1, +e.target.value || 1);
+    draw();
+  });
+  document.querySelector("#limitPrice")?.addEventListener("change", e => {
+    limitPrice = +e.target.value || asset.price;
+    draw();
+  });
+  document.querySelector("#triggerPrice")?.addEventListener("change", e => {
+    triggerPrice = +e.target.value || asset.price;
+    draw();
+  });
+  document.querySelector("#trailPercent")?.addEventListener("change", e => {
+    trailPercent = Math.max(0.1, +e.target.value || 2);
+    draw();
+  });
+  document.querySelector("#timeInForce")?.addEventListener("change", e => {
+    timeInForce = e.target.value;
+  });
+  document.querySelectorAll(".order-types button").forEach(button => {
+    button.addEventListener("click", () => {
+      orderType = button.dataset.type;
+      if (orderType === "limit") limitPrice = side === "Покупка" ? book.bestAsk : book.bestBid;
+      if (orderType === "stop") triggerPrice = book.bestBid;
+      if (orderType === "take") triggerPrice = book.bestAsk;
+      error = null;
+      draw();
+    });
+  });
+  document.querySelectorAll(".orderbook-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const price = +row.dataset.price;
+      const sideHint = row.dataset.side;
+      if (orderType === "market") orderType = "limit";
+      if (orderType === "limit") limitPrice = price;
+      else if (orderType === "trailing") {
+        trailPercent = Math.max(0.5, +Math.abs(((asset.price - price) / asset.price) * 100).toFixed(1));
+      } else triggerPrice = price;
+      if (sideHint === "ask" && side === "Покупка" && orderType === "stop") orderType = "take";
+      draw();
+    });
+  });
+  document.querySelector("#confirm")?.addEventListener("click", () => {
+    const result = InvestStore.placeOrder({
+      asset: asset.id,
+      side,
+      quantity,
+      type: proMode ? orderType : "market",
+      limitPrice: orderType === "limit" ? limitPrice : null,
+      triggerPrice: (orderType === "stop" || orderType === "take") ? triggerPrice : null,
+      trailPercent: orderType === "trailing" ? trailPercent : null,
+      timeInForce: orderType === "market" ? "ioc" : timeInForce
+    });
+    if (result.error) {
+      error = result.error;
+      message = null;
+      draw();
+      return;
+    }
+    error = null;
+    completedOrder = result.order;
+    draw();
+  });
+}
+</script>
+</body>
+</html>

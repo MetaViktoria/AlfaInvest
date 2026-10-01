@@ -12,7 +12,7 @@
       <section style="padding:48px;background:linear-gradient(145deg,#121214,#38100c);color:#fff;min-height:560px;display:flex;flex-direction:column;justify-content:center">
         <a class="brand" href="index.html" style="padding:0;margin-bottom:44px"><span class="brand-mark">A</span>Alfa Invest</a>
         <h1 style="font-size:46px">Инвестиции —<br>это проще,<br>чем кажется</h1>
-        <p style="color:#bbbcc3;margin-top:18px;max-width:330px">Начните с небольшой суммы. Понятно, прозрачно, прямо из Альфа-Банка.</p>
+        <p style="color:#bbbcc3;margin-top:18px;max-width:330px">Начните с небольшой суммы. Без опыта. Вместе с приложением ALFA INVEST.</p>
         <div style="display:grid;gap:13px;margin-top:34px;color:#eee">
           <span>✓ От 50 BYN</span><span>✓ Без сложных терминов</span><span>✓ Комиссия видна до покупки</span>
         </div>
@@ -25,10 +25,11 @@
   <script src="js/data.js"></script><script src="js/store.js"></script>
   <script>
     const stepData = [
-      { title: "Зачем вам инвестиции?", caption: "Подберём понятную отправную точку", options: ["Накопить на цель", "Получать пассивный доход", "Просто попробовать"] },
-      { title: "Есть ли опыт?", caption: "Объясним только то, что действительно нужно", options: ["Я начинаю", "Покупал(а) активы", "Уверенно инвестирую"] },
-      { title: "С какой суммы начнём?", caption: "Её всегда можно изменить", options: ["50 BYN", "500 BYN", "1 000 BYN"] }
+      { key: "goal", title: "Зачем вам инвестиции?", caption: "Это поможет подобрать стартовый набор", options: ["Накопить на цель", "Получать пассивный доход", "Просто попробовать"] },
+      { key: "experience", title: "Есть ли опыт?", caption: "Объясним только то, что действительно нужно", options: ["Я начинаю", "Покупал(а) активы", "Уверенно инвестирую"] },
+      { key: "startAmount", title: "С какой суммы начнём?", caption: "Её всегда можно изменить", options: ["50 BYN", "500 BYN", "1 000 BYN"] }
     ];
+    const answers = { goal: stepData[0].options[0], experience: stepData[1].options[0], startAmount: stepData[2].options[0] };
     let step = 0, choice = 0;
     function draw() {
       const item = stepData[step];
@@ -37,11 +38,12 @@
         <div class="eyebrow">Шаг ${step+1} из 3</div><h2 style="font-size:29px">${item.title}</h2><p class="sub" style="margin:8px 0 24px">${item.caption}</p>
         <div class="grid" style="gap:9px">${item.options.map((option,i)=>`<button class="choice btn ${choice===i?"btn-soft":"btn-line"}" style="justify-content:flex-start;height:58px" data-i="${i}">${option}</button>`).join("")}</div>
         <button class="btn btn-red" style="width:100%;margin-top:24px" id="next">${step===2?"Открыть инвест-счёт":"Продолжить"}</button>
-        <p class="sub" style="text-align:center;font-size:12px;margin-top:14px">Счёт откроется по данным Альфа-Банка</p>`;
-      document.querySelectorAll(".choice").forEach(button=>button.onclick=()=>{choice=+button.dataset.i;draw();});
+        <p class="sub" style="text-align:center;font-size:12px;margin-top:14px">Счёт откроется по данным Альфа-Банка · Тестовое задание. Интерактивный прототип.</p>`;
+      document.querySelectorAll(".choice").forEach(button=>button.onclick=()=>{choice=+button.dataset.i;answers[item.key]=item.options[choice];draw();});
       document.querySelector("#next").onclick=()=> {
-        if (step < 2) { step++; choice = 0; draw(); }
-        else { const state=InvestStore.read(); state.onboarded=true; InvestStore.write(state); location.href="home.html"; }
+        answers[item.key] = item.options[choice];
+        if (step < 2) { step++; choice = item.options.indexOf(answers[stepData[step].key]); if (choice < 0) choice = 0; draw(); }
+        else { InvestStore.saveOnboarding(answers); location.href="home.html"; }
       };
     }
     draw();
